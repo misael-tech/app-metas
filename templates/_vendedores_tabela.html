@@ -1,0 +1,10 @@
+{% load fmt %}
+<div class="table-wrap"><table>
+<thead><tr><th>Vendedor</th><th>Meta mensal</th><th>Meta diária</th><th>Vendido</th><th>Falta</th><th>%</th><th>Dias batidos</th><th>Não batidos</th><th>Status</th></tr></thead>
+<tbody>{% for x in stats %}<tr>
+<td data-l="Vendedor"><a href="{% url 'vendedor_detalhe' x.vendedor.pk %}?ano={{ ano|default:'' }}&mes={{ mes|default:'' }}">{{ x.vendedor.nome }}</a></td>
+<td data-l="Meta mensal">{{ x.meta_mensal|moeda }}</td><td data-l="Meta diária">{{ x.meta_diaria|moeda }}</td>
+<td data-l="Vendido">{{ x.vendido|moeda }}</td><td data-l="Falta">{{ x.falta|moeda }}</td><td data-l="%">{{ x.pct|perc }}</td>
+<td data-l="Batidos">{{ x.batidos }}</td><td data-l="Não batidos">{{ x.nao_batidos }}</td>
+<td data-l="Status"><span class="badge {{ x.status }}">{{ x.status_txt }}</span></td></tr>
+{% empty %}<tr><td colspan="9">Sem dados.</td></tr>{% endfor %}</tbody></table></div>

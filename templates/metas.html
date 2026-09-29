@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="head"><h1>Metas <small>{{ mes_nome }} {{ ano }}</small></h1></div>
+<form class="filters card" method="get">{% include "_periodo.html" %}<button class="btn">Ver mês</button></form>
+<form method="post" class="card">{% csrf_token %}
+  <input type="hidden" name="mes" value="{{ mes }}"><input type="hidden" name="ano" value="{{ ano }}">
+  <label class="field">Meta da empresa (R$)<input type="number" step="0.01" min="0" name="empresa" value="{{ empresa }}"></label>
+  <div class="table-wrap"><table>
+  <thead><tr><th>Vendedor</th><th>Meta mensal (R$)</th><th>Meta diária (R$)</th></tr></thead>
+  <tbody>{% for l in linhas %}<tr><td data-l="Vendedor">{{ l.v.nome }}</td>
+  <td data-l="Meta mensal"><input type="number" step="0.01" min="0" name="mensal_{{ l.v.pk }}" value="{{ l.mensal }}"></td>
+  <td data-l="Meta diária"><input type="number" step="0.01" min="0" name="diaria_{{ l.v.pk }}" value="{{ l.diaria }}"></td></tr>
+  {% empty %}<tr><td colspan="3">Nenhum vendedor ativo.</td></tr>{% endfor %}</tbody></table></div>
+  <p class="muted">As metas são gravadas por mês/ano; meses anteriores não são alterados.</p>
+  <button class="btn">Salvar metas</button>
+</form>
+{% endblock %}

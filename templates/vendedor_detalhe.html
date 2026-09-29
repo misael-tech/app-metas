@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% load fmt static %}
+{% block content %}
+<div class="head"><h1>{{ v.nome }} <small>{{ v.cargo }} · {{ mes_nome }} {{ ano }}</small></h1>
+<a class="btn ghost" href="{% url 'vendedor_editar' v.pk %}">Editar</a></div>
+<form class="filters card no-print" method="get">{% include "_periodo.html" %}<button class="btn">Filtrar</button></form>
+<div class="grid4">
+  <div class="card kpi"><span>Meta mensal</span><b>{{ st.meta_mensal|moeda }}</b></div>
+  <div class="card kpi"><span>Vendido</span><b>{{ st.vendido|moeda }}</b></div>
+  <div class="card kpi"><span>Falta</span><b>{{ st.falta|moeda }}</b></div>
+  <div class="card kpi"><span>Percentual</span><b>{{ st.pct|perc }}</b><div class="bar"><span class="{{ st.status }}" style="width:{{ st.pct_bar }}%"></span></div></div>
+  <div class="card kpi"><span>Meta diária</span><b>{{ st.meta_diaria|moeda }}</b></div>
+  <div class="card kpi"><span>Dias batidos</span><b>{{ st.batidos }} <small>de {{ st.dias_trabalhados }} ({{ st.taxa|perc }})</small></b></div>
+  <div class="card kpi"><span>Dias não batidos</span><b>{{ st.nao_batidos }}</b></div>
+  <div class="card kpi"><span>Média diária</span><b>{{ st.media|moeda }}</b></div>
+</div>
+<div class="grid2">
+  <div class="card"><h3>Evolução diária</h3><div class="chart"><canvas id="c-dias"></canvas></div></div>
+  <div class="card"><h3>Histórico mensal</h3><div class="chart"><canvas id="c-hist"></canvas></div></div>
+</div>
+<h2>Desempenho diário</h2>
+<div class="card"><div class="table-wrap"><table>
+<thead><tr><th>Data</th><th>Meta</th><th>Vendido</th><th>%</th><th>Status</th></tr></thead>
+<tbody>{% for d in st.dias %}<tr><td data-l="Data">{{ d.data|date:"d/m/Y" }}</td><td data-l="Meta">{{ d.meta|moeda }}</td>
+<td data-l="Vendido">{{ d.vendido|moeda }}</td><td data-l="%">{{ d.pct|perc }}</td>
+<td data-l="Status"><span class="badge {{ d.status }}">{{ d.status_txt }}</span></td></tr>
+{% empty %}<tr><td colspan="5">Sem vendas no período.</td></tr>{% endfor %}</tbody></table></div></div>
+{{ chart|json_script:"chart-data" }}
+{% endblock %}
+{% block scripts %}<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script><script src="{% static 'js/charts.js' %}"></script>{% endblock %}

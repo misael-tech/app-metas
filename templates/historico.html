@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% load fmt %}
+{% block content %}
+<div class="head"><h1>Histórico {% if titulo %}<small>{{ titulo }}</small>{% endif %}</h1></div>
+{% if not lista %}<div class="card">Ainda não há dados.</div>{% else %}
+<div class="chips no-print">{% for a, m, nome in lista %}<a class="chip {% if sel.0 == a and sel.1 == m %}on{% endif %}" href="?ano={{ a }}&mes={{ m }}">{{ nome }}</a>{% endfor %}</div>
+{% include "_empresa.html" %}
+<h2>Vendedores</h2><div class="card">{% include "_vendedores_tabela.html" %}</div>
+<h2>Vendas do mês</h2>
+<div class="card"><div class="table-wrap"><table>
+<thead><tr><th>Data</th><th>Vendedor</th><th>Bruto</th><th>À vista</th><th>Observação</th></tr></thead>
+<tbody>{% for x in vendas %}<tr><td data-l="Data">{{ x.data|date:"d/m/Y" }}</td><td data-l="Vendedor">{{ x.vendedor.nome }}</td>
+<td data-l="Bruto">{{ x.valor_bruto|moeda }}</td><td data-l="À vista">{{ x.valor_a_vista|moeda }}</td><td data-l="Obs.">{{ x.observacao }}</td></tr>
+{% empty %}<tr><td colspan="5">Sem vendas.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endif %}
+{% endblock %}

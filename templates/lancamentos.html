@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% load fmt %}
+{% block content %}
+<div class="head"><h1>Lançamentos</h1><a class="btn" href="{% url 'venda_nova' %}">+ Nova venda</a></div>
+<form class="filters card no-print" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Buscar...">
+  <input type="date" name="data" value="{{ data }}">
+  {% include "_vendedor_select.html" %}
+  <button class="btn">Filtrar</button><a class="btn ghost" href="{% url 'lancamentos' %}">Limpar</a>
+</form>
+<div class="card"><div class="table-wrap"><table>
+<thead><tr><th>Data</th><th>Vendedor</th><th>Valor bruto</th><th>Valor à vista</th><th>Observação</th><th></th></tr></thead>
+<tbody>{% for x in vendas %}<tr><td data-l="Data">{{ x.data|date:"d/m/Y" }}</td><td data-l="Vendedor">{{ x.vendedor.nome }}</td>
+<td data-l="Bruto">{{ x.valor_bruto|moeda }}</td><td data-l="À vista">{{ x.valor_a_vista|moeda }}</td><td data-l="Obs.">{{ x.observacao }}</td>
+<td class="acoes"><a href="{% url 'venda_editar' x.pk %}">Editar</a>
+<form method="post" action="{% url 'venda_excluir' x.pk %}" onsubmit="return confirm('Excluir esta venda?')">{% csrf_token %}<button class="link danger">Excluir</button></form></td></tr>
+{% empty %}<tr><td colspan="6">Nenhum lançamento.</td></tr>{% endfor %}</tbody>
+<tfoot><tr><th colspan="2">Total</th><th>{{ tot.b|moeda }}</th><th>{{ tot.a|moeda }}</th><th colspan="2"></th></tr></tfoot></table></div></div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% load static %}<!doctype html>
+<html lang="pt-br"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Metas e Vendas{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'css/style.css' %}"><script>try{document.documentElement.dataset.theme=localStorage.getItem("tema")||"light"}catch(e){}</script></head>
+<body>
+{% if user.is_authenticated %}
+{% with u=request.resolver_match.url_name %}
+<header class="topbar no-print"><button id="menu-btn" type="button" aria-label="Menu">☰</button><strong>Metas &amp; Vendas</strong><button type="button" class="theme-btn" aria-label="Alternar tema"></button></header>
+<aside id="sidebar" class="sidebar no-print">
+  <div class="brand">Metas &amp; Vendas</div>
+  <nav>
+    <a href="{% url 'dashboard' %}" class="{% if u == 'dashboard' %}on{% endif %}">Dashboard</a>
+    <a href="{% url 'vendedores' %}" class="{% if 'vendedor' in u %}on{% endif %}">Vendedores</a>
+    <a href="{% url 'lancamentos' %}" class="{% if 'venda' in u or u == 'lancamentos' %}on{% endif %}">Lançamentos</a>
+    <a href="{% url 'metas' %}" class="{% if u == 'metas' %}on{% endif %}">Metas</a>
+    <a href="{% url 'historico' %}" class="{% if u == 'historico' %}on{% endif %}">Histórico</a>
+    <a href="{% url 'relatorios' %}" class="{% if u == 'relatorios' %}on{% endif %}">Relatórios</a>
+    {% if user.is_staff %}<a href="{% url 'admin_acesso' %}">Admin</a>{% endif %}
+  </nav>
+  <button type="button" class="theme-btn" aria-label="Alternar tema"></button>
+  <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn ghost">Sair ({{ user.username }})</button></form>
+</aside>
+{% endwith %}
+{% endif %}
+<main class="{% if user.is_authenticated %}main{% else %}center{% endif %}">
+  {% if not user.is_authenticated %}<button type="button" class="theme-btn" aria-label="Alternar tema"></button>{% endif %}
+  {% for m in messages %}<div class="alert no-print">{{ m }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<script src="{% static 'js/app.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body></html>

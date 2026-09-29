@@ -1,0 +1,2 @@
+<select name="vendedor"><option value="">Todos os vendedores</option>
+{% for x in lista_vendedores %}<option value="{{ x.pk }}" {% if x.pk == vid %}selected{% endif %}>{{ x.nome }}</option>{% endfor %}</select>

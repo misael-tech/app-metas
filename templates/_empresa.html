@@ -1,0 +1,8 @@
+{% load fmt %}
+<div class="grid4">
+  <div class="card kpi"><span>Meta da empresa</span><b>{{ empresa.meta|moeda }}</b></div>
+  <div class="card kpi"><span>Vendido no mês</span><b>{{ empresa.vendido|moeda }}</b></div>
+  <div class="card kpi"><span>Falta</span><b>{{ empresa.falta|moeda }}</b></div>
+  <div class="card kpi"><span>Percentual geral</span><b>{{ empresa.pct|perc }}</b>
+    <div class="bar"><span class="{{ empresa.status }}" style="width:{{ empresa.pct_bar }}%"></span></div></div>
+</div>

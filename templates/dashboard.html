@@ -1,0 +1,37 @@
+{% extends "base.html" %}{% load fmt static %}
+{% block content %}
+<div class="head"><h1>Dashboard <small>{% if modo_hoje %}Hoje · {{ hoje|date:"d/m/Y" }}{% else %}{{ mes_nome }} {{ ano }}{% endif %}</small></h1></div>
+<form class="filters card no-print" method="get">
+  {% include "_periodo.html" %}{% include "_vendedor_select.html" %}
+  <button class="btn">Filtrar</button>
+  <a class="btn ghost" href="{% url 'dashboard' %}">Mês atual</a>
+  <a class="btn ghost" href="?modo=hoje">Hoje</a>
+</form>
+{% if not modo_hoje %}
+  {% include "_empresa.html" %}
+  <h2>Vendedores</h2>
+  <div class="grid3">{% for x in stats %}
+    <div class="card"><div class="row"><h3>{{ x.vendedor.nome }}</h3><span class="badge {{ x.status }}">{{ x.status_txt }}</span></div>
+      <div class="bar"><span class="{{ x.status }}" style="width:{{ x.pct_bar }}%"></span></div>
+      <dl class="dl">
+        <dt>Meta mensal</dt><dd>{{ x.meta_mensal|moeda }}</dd><dt>Vendido</dt><dd>{{ x.vendido|moeda }}</dd>
+        <dt>Falta</dt><dd>{{ x.falta|moeda }}</dd><dt>Atingimento</dt><dd>{{ x.pct|perc }}</dd>
+        <dt>Meta diária</dt><dd>{{ x.meta_diaria|moeda }}</dd>
+        <dt>Dias batidos</dt><dd>{{ x.batidos }}</dd><dt>Dias não batidos</dt><dd>{{ x.nao_batidos }}</dd>
+      </dl>
+      <a href="{% url 'vendedor_detalhe' x.vendedor.pk %}?ano={{ ano }}&mes={{ mes }}">Ver perfil →</a></div>
+  {% empty %}<p>Nenhum vendedor ativo.</p>{% endfor %}</div>
+{% endif %}
+<h2>Desempenho de hoje</h2>
+<div class="card">{% include "_diario.html" %}</div>
+{% if not modo_hoje %}
+<h2>Gráficos</h2>
+<div class="grid2">
+  <div class="card"><h3>Meta x vendido</h3><div class="chart"><canvas id="c-meta"></canvas></div></div>
+  <div class="card"><h3>Atingimento (%)</h3><div class="chart"><canvas id="c-pct"></canvas></div></div>
+</div>
+<div class="card"><h3>Vendas por dia do mês</h3><div class="chart"><canvas id="c-dias"></canvas></div></div>
+{{ chart|json_script:"chart-data" }}
+{% endif %}
+{% endblock %}
+{% block scripts %}{% if not modo_hoje %}<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script><script src="{% static 'js/charts.js' %}"></script>{% endif %}{% endblock %}

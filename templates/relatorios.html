@@ -1,0 +1,39 @@
+{% extends "base.html" %}{% load fmt %}
+{% block content %}
+<div class="head"><h1>Relatório <small>{{ ini|date:"d/m/Y" }} a {{ fim|date:"d/m/Y" }}</small></h1>
+<button class="btn no-print" onclick="window.print()">Imprimir</button></div>
+<form class="filters card no-print" method="get">
+  {% include "_periodo.html" %}{% include "_vendedor_select.html" %}
+  <label>De <input type="date" name="data_ini" value="{{ data_ini }}"></label>
+  <label>Até <input type="date" name="data_fim" value="{{ data_fim }}"></label>
+  <label>Comparar com
+    <select name="mes2"><option value="">—</option>{% for n, nome in meses %}<option value="{{ n }}" {% if n == m2 %}selected{% endif %}>{{ nome }}</option>{% endfor %}</select>
+    <select name="ano2"><option value="">—</option>{% for a in anos %}<option value="{{ a }}" {% if a == a2 %}selected{% endif %}>{{ a }}</option>{% endfor %}</select></label>
+  <button class="btn">Filtrar</button>
+</form>
+<div class="grid4">
+  <div class="card kpi"><span>Total bruto</span><b>{{ resumo.bruto|moeda }}</b></div>
+  <div class="card kpi"><span>Total à vista</span><b>{{ resumo.avista|moeda }}</b></div>
+  <div class="card kpi"><span>Qtd. de vendas</span><b>{{ resumo.qtd }}</b></div>
+  <div class="card kpi"><span>Meta (mês inicial)</span><b>{{ resumo.meta|moeda }}</b></div>
+  <div class="card kpi"><span>Vendido (base da meta)</span><b>{{ resumo.vendido|moeda }}</b></div>
+  <div class="card kpi"><span>Percentual</span><b>{{ resumo.pct|perc }}</b></div>
+  <div class="card kpi"><span>Dias batidos</span><b>{{ resumo.batidos }}</b></div>
+  <div class="card kpi"><span>Dias não batidos</span><b>{{ resumo.nao_batidos }}</b></div>
+</div>
+{% if comp %}
+<h2>Comparativo com {{ comp.rotulo }}</h2>
+<div class="card"><div class="table-wrap"><table>
+<thead><tr><th></th><th>Período do relatório</th><th>{{ comp.rotulo }}</th><th>Diferença</th></tr></thead>
+<tbody><tr><td>Bruto</td><td>{{ comp.a.bruto|moeda }}</td><td>{{ comp.b.bruto|moeda }}</td><td>{{ comp.dif.bruto|moeda }} ({{ comp.var|perc }})</td></tr>
+<tr><td>À vista</td><td>{{ comp.a.avista|moeda }}</td><td>{{ comp.b.avista|moeda }}</td><td>{{ comp.dif.avista|moeda }}</td></tr>
+<tr><td>Vendas</td><td>{{ comp.a.qtd }}</td><td>{{ comp.b.qtd }}</td><td>{{ comp.dif.qtd }}</td></tr></tbody></table></div></div>
+{% endif %}
+<h2>Por vendedor</h2>
+<div class="card"><div class="table-wrap"><table>
+<thead><tr><th>Vendedor</th><th>Bruto</th><th>À vista</th><th>Vendas</th><th>Meta</th><th>Vendido</th><th>%</th><th>Dias batidos</th><th>Não batidos</th></tr></thead>
+<tbody>{% for x in stats %}<tr><td data-l="Vendedor">{{ x.vendedor.nome }}</td><td data-l="Bruto">{{ x.bruto|moeda }}</td><td data-l="À vista">{{ x.avista|moeda }}</td>
+<td data-l="Vendas">{{ x.qtd }}</td><td data-l="Meta">{{ x.meta_mensal|moeda }}</td><td data-l="Vendido">{{ x.vendido|moeda }}</td>
+<td data-l="%">{{ x.pct|perc }}</td><td data-l="Batidos">{{ x.batidos }}</td><td data-l="Não batidos">{{ x.nao_batidos }}</td></tr>
+{% empty %}<tr><td colspan="9">Sem dados no período.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

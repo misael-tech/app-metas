@@ -1,0 +1,2 @@
+<select name="mes">{% for n, nome in meses %}<option value="{{ n }}" {% if n == mes %}selected{% endif %}>{{ nome }}</option>{% endfor %}</select>
+<select name="ano">{% for a in anos %}<option value="{{ a }}" {% if a == ano %}selected{% endif %}>{{ a }}</option>{% endfor %}</select>

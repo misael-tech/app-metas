@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="head"><h1>Área administrativa</h1></div>
+<div class="card formcard"><form method="post">{% csrf_token %}
+  <p class="muted">Confirme a senha de <b>{{ user.username }}</b> para abrir o Admin.</p>
+  {% if erro %}<div class="alert" style="background:var(--bad-bg);color:var(--bad-text)">{{ erro }}</div>{% endif %}
+  <p><label for="senha">Senha</label><input type="password" id="senha" name="senha" autofocus required></p>
+  <button class="btn">Entrar no Admin</button> <a class="btn ghost" href="{% url 'dashboard' %}">Cancelar</a>
+</form></div>
+{% endblock %}
